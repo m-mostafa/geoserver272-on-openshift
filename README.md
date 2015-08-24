@@ -1,53 +1,42 @@
-GeoServer on OpenShift
-======================
+A quickstart for GeoServer to run on OpenShift
 
-View this live at [http://geopaas.io](http://geopaas.io).
+CREDIT: https://www.openshift.com/blogs/build-your-own-google-maps-and-more-with-geoserver-on-openshift
 
-To fully appreciate what is happening here please read the [blog post](https://www.openshift.com/blogs/build-your-own-google-maps-and-more-with-geoserver-on-openshift) by Steven on which this demo is based.
+		http://blog.geopaas.io/?page_id=100
 
-Create the gear.
+This was tested on openshift's Tomcat 7 (JBoss EWS 2.0)
 
-```
-rhc app-create -s geoserver jbossews-2.0
-rhc cartridge add postgresql-9.2 --app geoserver
-```
+The GeoServer is a version 2.7.2 WAR file.
 
-Add the PostGIS extensions to PostgreSQL.
+Also please read the [blog post](https://www.openshift.com/blogs/build-your-own-google-maps-and-more-with-geoserver-on-openshift) for further detials.
 
-```
-rhc ssh geoserver
-psql
-create extension postgis;
-\q
-exit
-```
 
-Pull down the demo environment
+=============================
 
-```
-cd geoserver
-git remote add github -m master git@github.com:jason-callaway/geoserver-on-openshift.git
+Here are the instructions to add this git repo to a blank tomcat 7 application (on openShift) 
+At the windows command prompt navigate to a suitable folder (where you clone the application files), then enter the commands as follows:
 
-git pull -s recursive -X theirs github master
-```
+	rhc app create geoserver -s tomcat7 postgresql-9
 
-We don't need to build anything, so remove pom.xml.
+    cd geoserver
 
-```
-git rm pom.xml
-```
+	git remote add github -m master https://github.com/m-mostafa/geoserver272-on-openshift.git
 
-Now commit and push
+	git pull -s recursive -X theirs github master
+	
+	git rm pom.xml
+	
+	git commit -am "initial commit"
 
-```
-git commit -am 'initial commit'
+	git push origin
+	
 
-git push origin
-```
+Finally set CATALINA_OPTS
 
-Set CATALINA_OPTS.
-```
-rhc set-env --env CATALINA_OPTS=/var/lib/<your uuid>/app-root/data/geoserver_data --app geoserver
-```
+	rhc set-env --env CATALINA_OPTS=/var/lib/geoserver-{your domain}.rhcloud.com/app-root/data/geoserver_data --app geoserver	
+	
+Once it works, the URL to access it will be:
 
-The GeoServer can be accessed at http://geoserver-yournamespace.rhcloud.com/web.
+http://geoserver-{your domain}.rhcloud.com/web
+
+
